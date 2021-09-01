@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd ">
-    <apikit:config name="america-flights-api-config" api="resource::01364640-1108-45e8-8e03-ca3479e4e97c:america-flights-api:1.0.2:raml:zip:america-flights-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
-    <flow name="america-flights-api-main">
-        <http:listener config-ref="HTTP_Listener_config" path="/api/*">
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd ">
+    <apikit:config name="mua-flights-api-config" api="mua-flights-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <flow name="mua-flights-api-main">
+        <http:listener path="/api/*" config-ref="HTTP_Listener_config">
             <http:response statusCode="#[vars.httpStatus default 200]">
-                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
             </http:response>
             <http:error-response statusCode="#[vars.httpStatus default 500]">
-                <http:body>#[payload]</http:body>
-                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+                <http:body><![CDATA[#[payload]]]></http:body>
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
             </http:error-response>
         </http:listener>
-        <apikit:router config-ref="america-flights-api-config" />
+        <apikit:router config-ref="mua-flights-api-config" />
         <error-handler>
             <on-error-propagate type="APIKIT:BAD_REQUEST">
                 <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
@@ -93,17 +93,17 @@ output application/json
             </on-error-propagate>
         </error-handler>
     </flow>
-    <flow name="america-flights-api-console">
-        <http:listener config-ref="HTTP_Listener_config" path="/console/*">
+    <flow name="mua-flights-api-console">
+        <http:listener path="/console/*" config-ref="HTTP_Listener_config">
             <http:response statusCode="#[vars.httpStatus default 200]">
-                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
             </http:response>
             <http:error-response statusCode="#[vars.httpStatus default 500]">
-                <http:body>#[payload]</http:body>
-                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+                <http:body><![CDATA[#[payload]]]></http:body>
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
             </http:error-response>
         </http:listener>
-        <apikit:console config-ref="america-flights-api-config" />
+        <apikit:console config-ref="mua-flights-api-config" />
         <error-handler>
             <on-error-propagate type="APIKIT:NOT_FOUND">
                 <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
@@ -120,20 +120,47 @@ output application/json
             </on-error-propagate>
         </error-handler>
     </flow>
-    <flow name="get:\flights:america-flights-api-config">
-		<flow-ref doc:name="getFlights" doc:id="473a15a1-0d48-415e-b7a8-7e4f5eb9b3d5" name="getFlights"/>
+    <flow name="get:\flights:mua-flights-api-config">
+        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+[
+  {
+    airline: "United",
+    flightCode: "ER38sd",
+    fromAirportCode: "LAX",
+    toAirportCode: "SFO",
+    departureDate: "May 21, 2016",
+    emptySeats: 0,
+    totalSeats: 200,
+    price: 199,
+    planeType: "Boeing 737"
+  }, 
+  {
+    airline: "Delta",
+    flightCode: "ER0945",
+    fromAirportCode: "PDX",
+    toAirportCode: "CLE",
+    departureDate: "June 1, 2016",
+    emptySeats: 24,
+    totalSeats: 350,
+    price: 450,
+    planeType: "Boeing 747"
+  }
+]]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
     </flow>
-    <flow name="get:\flights\(ID):america-flights-api-config">
-		<flow-ref doc:name="getFlightsByID" doc:id="2aedab4b-9a7c-48ac-aa30-c2649ad2380f" name="getFlightsByID"/>
-    </flow>
-    <flow name="post:\flights:application\json:america-flights-api-config">
+    <flow name="post:\flights:application\json:mua-flights-api-config">
         <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
             <ee:message>
                 <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {
-  "Flight added (but not really)": null
+  message: "Flight added (but not really)"
 }]]></ee:set-payload>
             </ee:message>
         </ee:transform>
