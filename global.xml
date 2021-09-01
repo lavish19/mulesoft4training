@@ -1,11 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+<mule xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:vm="http://www.mulesoft.org/schema/mule/vm" xmlns="http://www.mulesoft.org/schema/mule/core"
 	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
-http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
-	<configuration-properties doc:name="Configuration properties" doc:id="63e6acc0-ea15-445a-a5d8-f00f75917d79" file="config.yaml" />
-	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="bdc5f146-344d-4a25-87cf-bca90b393a23" >
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd 
+http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd">
+	
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="69d5729a-5f21-45b8-b1a2-5dbc2ff53996" >
 		<http:listener-connection host="0.0.0.0" port="${http.port}" />
 	</http:listener-config>
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="d9129ed6-0ea6-4e88-ad01-c8f4677236b0" >
+		<http:request-connection host="localhost" port="8081" />
+	</http:request-config>
+	<vm:config name="VM_Config" doc:name="VM Config" doc:id="936f7443-3e56-49ae-a428-8c7edd27bd0d" >
+		<vm:queues >
+			<vm:queue queueName="goodbye" />
+		</vm:queues>
+	</vm:config>
+	<salesforce:sfdc-config name="Salesforce_Config" doc:name="Salesforce Config" doc:id="65499f37-707a-49fa-a5e9-025ca2cec301" >
+		<salesforce:basic-connection username="${sfdc.username}" password="Ramkrishn@009" securityToken="gElMfUR1xqYliw96DDHMgbKJ" />
+	</salesforce:sfdc-config>
+	<configuration-properties doc:name="Configuration properties" doc:id="a7954ed5-2342-49ff-9da9-e61453969103" file="config.yaml"/>
+	<configuration-properties doc:name="Configuration properties" doc:id="69cf88b6-8a59-4b3b-b30c-1f6d653c6f11" file="config.yaml" />
+	
+	
 </mule>
